@@ -1,0 +1,12 @@
+{
+  "name": "cue-points-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "print": "I'm printing this"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
