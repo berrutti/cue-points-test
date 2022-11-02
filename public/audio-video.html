@@ -6,29 +6,32 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Audio and Video Stream</title>
-    <!--script defer>
-      var tracks = player.textTracks();
-      var metadataTrack;
+    <script>
+      window.addEventListener("load", function () {
+        var player = videojs("my-player");
+        var tracks = player.textTracks();
+        var metadataTrack;
 
-      for (var i = 0; i < tracks.length; i++) {
-        var track = tracks[i];
+        for (var i = 0; i < tracks.length; i++) {
+          var track = tracks[i];
 
-        if (track.kind === "metadata" && track.label === "Timed Metadata") {
-          track.mode = "hidden";
+          if (track.kind === "metadata" && track.label === "Timed Metadata") {
+            track.mode = "hidden";
 
-          // Store it for usage outside of the loop.
-          metadataTrack = track;
+            // Store it for usage outside of the loop.
+            metadataTrack = track;
+          }
         }
-      }
 
-      // Add a listener for the "cuechange" event and start ad playback.
-      metadataTrack.addEventListener("cuechange", function () {
-        console.log("Im showing my metadata");
+        // Add a listener for the "cuechange" event and start ad playback.
+        metadataTrack.addEventListener("cuechange", function () {
+          console.log("Im showing my metadata");
+        });
       });
-    </script-->
+    </script>
   </head>
   <body>
-    <video class="video-js" data-setup='{}'>
+    <video id="my-player" class="video-js">
       <source
         src="https://cue-points-test.vercel.app/video/master.m3u8"
         type="video/mp4"
