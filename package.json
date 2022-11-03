@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "print": "I'm printing this"
+    "serve": "parcel public/index.html"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "parcel": "^2.7.0"
+  }
 }
