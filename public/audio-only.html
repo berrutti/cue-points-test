@@ -1,10 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Audio Only Stream</title>
   </head>
-  <body></body>
+  <body>
+    <audio id="my-player" controls playsinline controlsList="nodownload" />
+
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+    <script>
+      window.player = videojs("my-player", {
+        html5: {
+          vhs: {
+            maxPlaylistRetries: 15,
+          },
+        },
+      });
+      window.player.ready(() => {
+        player.src([
+          {
+            src: "https://cue-points-test.vercel.app/audio/master.m3u8",
+            type: "application/vnd.apple.mpegurl",
+          },
+        ]);
+
+        const printNativeCueData = (cues) => {
+          Array.from(cues).forEach((cue) => {
+            if ("type" in cue && cue?.type === "org.id3") {
+              console.log({
+                value: cue.value.data,
+                start: cue.startTime,
+              });
+            }
+          });
+        };
+
+        const printCueData = (cues) => {
+          Array.from(cues).forEach((cue) => {
+            if ("value" in cue && cue?.value?.data) {
+              const value = new TextDecoder()
+                .decode(cue.value.data)
+                .replace("\x03", "")
+                .replace("\x00", "");
+              console.log({
+                value,
+                start: cue.startTime,
+                end: cue.endTime,
+              });
+            }
+          });
+        };
+
+        const onAddTrack = ({ track }) => {
+          if (videojs.browser.IS_SAFARI) {
+            if (track?.kind !== "metadata") {
+              return;
+            }
+          } else {
+            if (
+              track?.kind !== "metadata" &&
+              track?.label !== "Timed Metadata"
+            ) {
+              return;
+            }
+          }
+
+          track.mode = "hidden";
+          track.addEventListener("cuechange", () => {
+            if (!track.activeCues) {
+              return;
+            }
+            if (videojs.browser.IS_SAFARI) {
+              printNativeCueData(track.activeCues);
+            } else {
+              printCueData(track.activeCues);
+            }
+          });
+        };
+
+        if (videojs.browser.IS_SAFARI) {
+          const videoElement = player
+            .tech({ IWillNotUseThisInPlugins: true })
+            .el();
+          videoElement.textTracks.addEventListener("addtrack", onAddTrack);
+        } else {
+          player.textTracks().addEventListener("addtrack", onAddTrack);
+        }
+      });
+    </script>
+  </body>
 </html>
